@@ -21,6 +21,7 @@ export const AgePredictor: FC<AgePredictorProps> = ({ title }) => {
   const [name, setName] = useState("");
   const names = useRef<Map<string, { age: number }>>(new Map());
   const [age, setAge] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const controllerRef = useRef<AbortController | null>(null);
 
@@ -34,6 +35,7 @@ export const AgePredictor: FC<AgePredictorProps> = ({ title }) => {
       controllerRef.current = new AbortController();
 
       try {
+        setIsLoading(true);
         const result = await (
           await fetch(`https://api.agify.io/?name=${name}`, {
             signal: controllerRef.current?.signal,
@@ -44,6 +46,8 @@ export const AgePredictor: FC<AgePredictorProps> = ({ title }) => {
         controllerRef.current = null;
       } catch (error) {
         console.log("error", error);
+      } finally {
+        setIsLoading(false);
       }
     } else {
       setAge(result.age);
@@ -80,7 +84,7 @@ export const AgePredictor: FC<AgePredictorProps> = ({ title }) => {
                 }}
               />
               {age && <Text>Предполагаемый возраст - {age}</Text>}
-              {name && !age && <Text>Такого имени в базе нет</Text>}
+              {name && !age && !isLoading && <Text>Такого имени в базе нет</Text>}
               <Button size="m" type="submit">
                 Получить
               </Button>

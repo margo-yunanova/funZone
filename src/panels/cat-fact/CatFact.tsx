@@ -7,13 +7,17 @@ import {
   Textarea,
 } from "@vkontakte/vkui";
 import styles from "./styles.module.css";
-import { useLayoutEffect, useRef, useState } from "react";
+import { FC, useLayoutEffect, useRef, useState } from "react";
 
-export const CatFact = ({ title }) => {
+interface CatFact {
+  title: string;
+}
+
+export const CatFact: FC<CatFact> = ({ title }) => {
   const [fact, setFact] = useState("");
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  const fethcing = async () => {
+  const handleClick = async () => {
     const result = await (await fetch("https://catfact.ninja/fact")).json();
     setFact(result.fact);
   };
@@ -42,7 +46,7 @@ export const CatFact = ({ title }) => {
               value={fact}
               rows={5}
             />
-            <Button size="m" onClick={fethcing}>
+            <Button size="m" onClick={handleClick}>
               Получить
             </Button>
           </FormItem>
