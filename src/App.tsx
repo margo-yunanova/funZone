@@ -1,31 +1,32 @@
-import { useState, useEffect, ReactNode } from "react";
-import bridge, { UserInfo } from "@vkontakte/vk-bridge";
-import { View, SplitLayout, SplitCol, ScreenSpinner } from "@vkontakte/vkui";
+import { View, SplitLayout, SplitCol, PanelHeader, usePlatform } from "@vkontakte/vkui";
 import { useActiveVkuiLocation } from "@vkontakte/vk-mini-apps-router";
 
-import { Persik, Home } from "./panels";
+import { Home } from "./panels/home";
 import { DEFAULT_VIEW_PANELS } from "./routes";
+import { CatFact } from "./panels/cat-fact";
+import { AgePredictor } from "./panels/age-predictor";
+
+const panels = [
+  { title: "Случайный факт о кошках", id: "catFact" },
+  { title: "Узнай возраст человека по имени", id: "agePredictor" },
+];
 
 export const App = () => {
   const { panel: activePanel = DEFAULT_VIEW_PANELS.HOME } = useActiveVkuiLocation();
-  const [fetchedUser, setUser] = useState<UserInfo | undefined>();
-  const [popout, setPopout] = useState<ReactNode | null>(<ScreenSpinner size="large" />);
 
-  useEffect(() => {
-    async function fetchData() {
-      // const user = await bridge.send("VKWebAppGetUserInfo");
-      // setUser(user);
-      setPopout(null);
-    }
-    fetchData();
-  }, []);
+  const platform = usePlatform();
+  const isVKCOM = platform === "vkcom";
 
   return (
-    <SplitLayout popout={popout}>
-      <SplitCol>
+    <SplitLayout
+      style={{ justifyContent: "center" }}
+      header={!isVKCOM && <PanelHeader delimiter="none" />}
+    >
+      <SplitCol maxWidth={480}>
         <View activePanel={activePanel}>
-          <Home id="home" fetchedUser={fetchedUser} />
-          <Persik id="persik" />
+          <Home id="home" />
+          <CatFact id="catFact" title={panels[0].title} />
+          <AgePredictor id="agePredictor" title={panels[1].title} />
         </View>
       </SplitCol>
     </SplitLayout>

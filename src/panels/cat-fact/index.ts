@@ -1,0 +1,1 @@
+export { CatFact } from "./CatFact";

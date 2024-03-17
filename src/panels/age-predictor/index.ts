@@ -1,0 +1,1 @@
+export { AgePredictor } from "./AgePredictor";
