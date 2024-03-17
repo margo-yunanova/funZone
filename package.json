@@ -1,6 +1,7 @@
 {
   "name": "fanzone",
   "private": true,
+  "homepage": "https://github.com/margo-yunanova/fanZone'",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -9,7 +10,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "tunnel": "vk-tunnel --insecure=1 --http-protocol=http --ws-protocol=wss --host=localhost --port=5173",
-    "deploy": "vite build && vk-miniapps-deploy"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@vkontakte/icons": "^2.92.0",
@@ -17,6 +19,7 @@
     "@vkontakte/vk-bridge-react": "^1.0.1",
     "@vkontakte/vk-mini-apps-router": "^1.4.2",
     "@vkontakte/vkui": "^6.0.0",
+    "gh-pages": "^6.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "use-debounce": "^10.0.0"
