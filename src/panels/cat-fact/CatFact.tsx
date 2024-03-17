@@ -5,34 +5,50 @@ import {
   FormItem,
   Button,
   Textarea,
+  Panel,
+  PanelHeaderBack,
 } from "@vkontakte/vkui";
 import styles from "./styles.module.css";
-import { FC, useLayoutEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
+import { useRouteNavigator } from "@vkontakte/vk-mini-apps-router";
 
 interface CatFact {
   title: string;
+  id: string;
 }
 
-export const CatFact: FC<CatFact> = ({ title }) => {
+export const CatFact: FC<CatFact> = ({ title, id }) => {
   const [fact, setFact] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const routeNavigator = useRouteNavigator();
 
   const handleClick = async () => {
-    const result = await (await fetch("https://catfact.ninja/fact")).json();
-    setFact(result.fact);
+    try {
+      setIsLoading(true);
+      const result = await (await fetch("https://catfact.ninja/fact")).json();
+      setFact(result.fact);
+    } catch (e) {
+      console.log("error ", e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (fact) {
       textAreaRef.current?.focus();
       const firstWordLength = fact.split(" ")[0].length;
       textAreaRef.current?.setSelectionRange(firstWordLength, firstWordLength);
     }
-  });
+  }, [fact]);
 
   return (
-    <>
-      <PanelHeader>{title}</PanelHeader>
+    <Panel id={id}>
+      <PanelHeader before={<PanelHeaderBack onClick={() => routeNavigator.back()} />}>
+        {title}
+      </PanelHeader>
       <Group>
         <FormLayoutGroup>
           <FormItem
@@ -46,12 +62,12 @@ export const CatFact: FC<CatFact> = ({ title }) => {
               value={fact}
               rows={5}
             />
-            <Button size="m" onClick={handleClick}>
+            <Button disabled={isLoading} size="m" onClick={handleClick}>
               Получить
             </Button>
           </FormItem>
         </FormLayoutGroup>
       </Group>
-    </>
+    </Panel>
   );
 };
